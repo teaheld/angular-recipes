@@ -22,4 +22,8 @@ export class RecipeService {
     // This way you can't change the array
     return this.recipes.slice();
   }
+
+  getRecipe(index: number) {
+    return this.recipes[index];
+  }
 }
