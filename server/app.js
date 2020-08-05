@@ -26,8 +26,16 @@ app.use((req, res, next) => {
     next();
 });
 
-const recipesRoute = require('./routes/recipes');
+const passport = require('passport'),
+    jwtStrategy = require('./configurations/jwt-strategy');
+// Setting passport and jwtStrategy
+app.use(passport.initialize());
+passport.use(jwtStrategy);
+
+const usersRoute = require('./routes/users'),
+    recipesRoute = require('./routes/recipes');
 // Setting up routes
+app.use('/users', usersRoute);
 app.use('/recipes', recipesRoute);
 
 const notFound = require('./middlewares/not-found'),
