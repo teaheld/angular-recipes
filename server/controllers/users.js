@@ -10,12 +10,17 @@ const emailExists = require('../middlewares/email-exists'),
 module.exports.registerUser = [
     async(req, res, next) => {
         try {
-            const user = await User.getUserByEmail(req.body.email);
+            let user = await User.getUserByEmail(req.body.email);
 
             if (!user) {
-                await User.addUser(req.body.email, req.body.password);
+                user = await User.addUser(req.body.email, req.body.password);
 
-                res.status(201).send({ msg: 'User saved' });
+                // Automatically login in user 
+                // If one is created
+                const token = jwt.sign({ id: user._id, email: user.email },
+                    secret, { expiresIn: 3600 });
+
+                res.status(201).send({ id: user._id, email: user.email, token, expiresIn: +jwt.decode(token).exp * 1000 });
             } else {
                 next();
             }
@@ -36,9 +41,9 @@ module.exports.loginUser = [
             if (user) {
                 if (await user.comparePassword(req.body.password)) {
                     const token = jwt.sign({ id: user._id, email: user.email },
-                        secret, { expiresIn: '1h' });
+                        secret, { expiresIn: 3600 });
 
-                    res.send({ msg: 'You are now logged in', token: token, expiresIn: 3600 * 1000 });
+                    res.send({ id: user._id, email: user.email, token, expiresIn: +jwt.decode(token).exp * 1000 });
                 } else {
                     next();
                 }

@@ -1,6 +1,7 @@
 import { AuthService } from './auth.service';
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-auth',
@@ -12,7 +13,8 @@ export class AuthComponent implements OnInit {
   isLoading = false;
   error: string = null;
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService,
+              private router: Router) { }
 
   ngOnInit(): void {
   }
@@ -33,6 +35,8 @@ export class AuthComponent implements OnInit {
         .subscribe( res => {
           this.isLoading = false;
           console.log(res);
+
+          this.router.navigate(['/recipes']);
         }, error => {
           this.isLoading = false;
 
@@ -43,6 +47,8 @@ export class AuthComponent implements OnInit {
         .subscribe( res => {
           this.isLoading = false;
           console.log(res);
+
+          this.router.navigate(['/recipes']);
         }, error => {
           this.isLoading = false;
 

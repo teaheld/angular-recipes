@@ -35,12 +35,14 @@ userSchema.statics.getUserById = async function(id) {
 userSchema.statics.addUser = async function(email, password) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new this({
+    const user = new this({
         'email': email,
         'password': hashedPassword
     });
 
-    await newUser.save();
+    const savedUser = await user.save();
+
+    return savedUser;
 };
 
 userSchema.statics.getUserByEmail = async function(email) {

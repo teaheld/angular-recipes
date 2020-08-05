@@ -12,12 +12,12 @@ app.use(express.json({ extended: false }));
 // Cors Headers
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
     if (req.method === 'OPTIONS') {
         res.header(
             'Access-Control-Allow-Methods',
-            'OPTIONS, GET, POST, PUT, PATCH, DELETE, '
+            'OPTIONS, GET, POST, PUT, PATCH, DELETE'
         );
 
         return res.status(200).json({});
@@ -32,10 +32,12 @@ const passport = require('passport'),
 app.use(passport.initialize());
 passport.use(jwtStrategy);
 
+const authentication = require('./middlewares/authentication');
 const usersRoute = require('./routes/users'),
     recipesRoute = require('./routes/recipes');
 // Setting up routes
 app.use('/users', usersRoute);
+app.use(authentication.checkAuthenticated);
 app.use('/recipes', recipesRoute);
 
 const notFound = require('./middlewares/not-found'),
