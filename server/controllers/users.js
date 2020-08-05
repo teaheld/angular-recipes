@@ -3,6 +3,9 @@ const jwt = require('jsonwebtoken'),
 
 const User = require('../models/user');
 
+const emailExists = require('../middlewares/email-exists'),
+    invalidData = require('../middlewares/invalid-data');
+
 
 module.exports.registerUser = [
     async(req, res, next) => {
@@ -14,12 +17,14 @@ module.exports.registerUser = [
 
                 res.status(201).send({ msg: 'User saved' });
             } else {
-                res.status(400).send();
+                next();
             }
         } catch (error) {
             next(error);
         }
-    }
+    },
+
+    emailExists
 ];
 
 
@@ -35,13 +40,15 @@ module.exports.loginUser = [
 
                     res.send({ msg: 'You are now logged in', token: token, expiresIn: 3600 * 1000 });
                 } else {
-                    res.status(200).send({ msg: 'Incorrect email or password' });
+                    next();
                 }
             } else {
-                res.status(200).send({ msg: 'Incorrect email or password' });
+                next();
             }
         } catch (err) {
             next(err);
         }
-    }
+    },
+
+    invalidData
 ];
